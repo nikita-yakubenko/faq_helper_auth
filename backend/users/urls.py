@@ -1,7 +1,7 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from users.views import RegisterView, OrganizationViewSet, KnowledgedbViewSet, QnARelationViewSet, AnswerViewSet, QuestionViewSet
-from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()

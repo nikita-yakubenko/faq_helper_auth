@@ -40,7 +40,9 @@ urlpatterns_client = [
 # =================================================================================================
 # Настройки версий crosservice urls
 
-urlpatterns_srv_v1 = []
+urlpatterns_srv_v1 = [
+   path('', include('users.srv_urls')),
+]
 urlpatterns_srv = [
    path('v1/', include(urlpatterns_srv_v1)),
 ]
