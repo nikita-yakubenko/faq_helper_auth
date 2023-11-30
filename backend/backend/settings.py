@@ -13,6 +13,8 @@ from datetime import timedelta
 import os
 from pathlib import Path
 
+from django.utils import timezone
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,9 +28,7 @@ SECRET_KEY = 'django-insecure-o2k3xe1wwc8a27sunuv3@30tqziv2mwi%tdv+9hf7r0qx7v)2i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-DOCKER_HOST = ['auth', 'todo', 'webapp']
-LOCAL_HOST = ['localhost', '127.0.0.1']
-ALLOWED_HOSTS = DOCKER_HOST + LOCAL_HOST
+LOCAL_HOST = ['localhost']
 
 
 # Application definition
@@ -129,6 +129,18 @@ REST_FRAMEWORK = {
     ),
 }
 
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'Please manually add a "Token" prefix before the token itself, '
+                           'e.g. "Token [alphanumeric token value]"',
+        }}
+}
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -136,8 +148,76 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': True,
 
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
+    'ALGORITHM' : 'RS256',  # Default would be HS256
+    'SIGNING_KEY' : '''-----BEGIN RSA PRIVATE KEY-----
+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
+-----END RSA PRIVATE KEY-----
+''',
+
+    'VERIFYING_KEY' : '''-----BEGIN PUBLIC KEY-----
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAzEftMag7eswbhGEGIqcg
+OeEWcFcgbMaNJbKqy9LNLX7XSC2t5SwfLazInAd6H4u4amKg5dlDTe640e5+V4Qc
+/fIclqjxcFXxpL9wbx4ab6HtTCVPB4irJ8R3mzCtk4i2nvROn1CaIO+MgHJ/vfif
+6xZbJLSWrmPlhLhjd8tvcAXdFRziKm36/mjv1Rv0xwLxW/q9W0q+1WO76YfxQUg/
+CrK5tPpyBOtUCDDJsHkJ87bPQtSMQrYI4m1Ot1M11Wm91JbNLcEX+Cq1Zbxgha4w
+wqYS2SvyMhxo2WuDGNbhCyi5CNnByD1ApTNom69imxfxYYf0gb3oljeE3euPIndT
+WAZVmFlyANkt5/dij5Qn7mP4ztp0NZzWss6TpiY9m/MNH0pelXJRWVskFl2lhrGs
+rRHltK+JJc7iVT0YO6lXyIJGxVH+vjZSE0KkcGYWsjmnyHEWJaAu1VEFJNFLCtCN
+Jxcpwtv3/cPmtURRMem1+V9eDBGcHhYkq2XL1DfeezWTHFyKSasU9gM+adoxlnH8
+bQ1a69LWffmrtgO6d+2G0Njuh0vs7zNSaiC1jYTyupMgrY4krjjnV6+CkD4z6YG8
+GdGAp3sn79RmnKjwFepaMuU/wMukhoU6d4Iu9JnLj2giTkUPa2zW9SUKg7IoS5oz
+H4/+kLYihACjiIz/xoDFGtcCAwEAAQ==
+-----END PUBLIC KEY-----
+''',
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 
@@ -145,9 +225,9 @@ SIMPLE_JWT = {
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -184,3 +264,4 @@ LOGGING = {
 AUTH_USER_MODEL = 'users.User'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+

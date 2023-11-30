@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
 class UserManager(BaseUserManager):
+
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -43,3 +44,33 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+
+class Organization(models.Model):
+
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Создатель')
+    name = models.CharField(verbose_name='Название', max_length=255)
+
+
+class Knowledgedb(models.Model):
+
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name='Организация')
+    name = models.CharField(verbose_name='Название', max_length=255)
+    is_active = models.BooleanField(default=False)
+
+
+class QnARelation(models.Model):
+
+    knowledgedb = models.ForeignKey(Knowledgedb, on_delete=models.CASCADE, verbose_name='База знаний')
+
+
+class Answer(models.Model):
+
+    text = models.TextField(verbose_name='Текст ответа')
+    qna_relation = models.OneToOneField(QnARelation, on_delete=models.CASCADE, verbose_name='Связка')
+
+
+class Question(models.Model):
+
+    text = models.TextField(verbose_name='Текст вопроса')
+    qna_relation = models.ForeignKey(QnARelation, on_delete=models.CASCADE, verbose_name='Связка')

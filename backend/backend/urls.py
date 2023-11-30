@@ -21,12 +21,46 @@ schema_view = get_schema_view(
 )
 
 
+# =================================================================================================
+# Настройки версий client urls 
+
+urlpatterns_client_v1 = [
+   path('', include('users.urls')),
+   path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+   path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+]
+urlpatterns_client = [
+   path('v1/', include(urlpatterns_client_v1)),
+]
+
+# Конец настройки версий client urls
+# =================================================================================================
+
+
+# =================================================================================================
+# Настройки версий crosservice urls
+
+urlpatterns_srv_v1 = []
+urlpatterns_srv = [
+   path('v1/', include(urlpatterns_srv_v1)),
+]
+
+# Конец настройки версий crossservice urls
+# =================================================================================================
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/v1/users/', include('users.urls')),
-    path('api/v1/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+   # Административная панель
+   path('admin/', admin.site.urls),
+
+   # Внутреннаяя документация API
+   path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+   path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+   
+   # Пользовательские запросы идут на api/client/v*
+   path('api/client/', include(urlpatterns_client)),
+   
+   # Межсервисные запросы идут на api/srv/v*
+   path('api/srv/', include(urlpatterns_srv)),
 ]
